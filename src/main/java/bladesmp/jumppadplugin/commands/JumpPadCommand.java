@@ -96,6 +96,13 @@ public class JumpPadCommand implements CommandExecutor, TabCompleter {
                 }
                 setRegionStrength(player, args[1], args[2]);
                 break;
+            case "setforward": // Neuer Befehl für Vorwärtssprung
+                if (args.length < 3) {
+                    sendMessage(player, "<red>Verwendung: /jumppad setforward <region> <vorwärtsstärke>");
+                    return true;
+                }
+                setRegionForwardStrength(player, args[1], args[2]);
+                break;
             case "setsound":
                 if (args.length < 3) {
                     sendMessage(player, "<red>Verwendung: /jumppad setsound <region> <sound>");
@@ -217,6 +224,7 @@ public class JumpPadCommand implements CommandExecutor, TabCompleter {
                 region.getPos2().getBlockZ());
         sendMessage(player, "<gray>JumpPad Block: <yellow>" + region.getJumpPadBlock().name());
         sendMessage(player, "<gray>Sprung Stärke: <yellow>" + region.getJumpStrength());
+        sendMessage(player, "<gray>Vorwärts Stärke: <yellow>" + region.getForwardStrength()); // Neue Info
         sendMessage(player, "<gray>Sound: <yellow>" + region.getSound().name());
     }
 
@@ -247,6 +255,30 @@ public class JumpPadCommand implements CommandExecutor, TabCompleter {
 
             if (plugin.getRegionManager().setRegionStrength(regionName, strength)) {
                 sendMessage(player, "<green>Sprung Stärke für Region '" + regionName + "' wurde auf " + strength + " gesetzt!");
+            } else {
+                String message = plugin.getConfigManager().getRegionNotFoundMessage()
+                        .replace("<region>", regionName);
+                sendMessage(player, message);
+            }
+        } catch (NumberFormatException e) {
+            sendMessage(player, "<red>Ungültige Zahl: " + strengthString);
+        }
+    }
+
+    private void setRegionForwardStrength(Player player, String regionName, String strengthString) {
+        try {
+            double strength = Double.parseDouble(strengthString);
+
+            if (strength < 0) {
+                sendMessage(player, "<red>Die Vorwärts-Stärke kann nicht negativ sein!");
+                return;
+            }
+
+            if (plugin.getRegionManager().setRegionForwardStrength(regionName, strength)) {
+                sendMessage(player, "<green>Vorwärts-Stärke für Region '" + regionName + "' wurde auf " + strength + " gesetzt!");
+                if (strength == 0) {
+                    sendMessage(player, "<yellow>Hinweis: Bei Stärke 0 gibt es keinen Vorwärtsschub, nur vertikalen Sprung.");
+                }
             } else {
                 String message = plugin.getConfigManager().getRegionNotFoundMessage()
                         .replace("<region>", regionName);
@@ -289,6 +321,7 @@ public class JumpPadCommand implements CommandExecutor, TabCompleter {
         sendMessage(player, "<yellow>/jumppad info <name> <gray>- Zeige Region Info");
         sendMessage(player, "<yellow>/jumppad setblock <region> <block> <gray>- Setze JumpPad Block");
         sendMessage(player, "<yellow>/jumppad setstrength <region> <stärke> <gray>- Setze Sprung Stärke");
+        sendMessage(player, "<yellow>/jumppad setforward <region> <stärke> <gray>- Setze Vorwärts Stärke");
         sendMessage(player, "<yellow>/jumppad setsound <region> <sound> <gray>- Setze Sound");
         sendMessage(player, "<yellow>/jumppad reload <gray>- Plugin neu laden");
     }
@@ -303,7 +336,7 @@ public class JumpPadCommand implements CommandExecutor, TabCompleter {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {
-            String[] subCommands = {"pos1", "pos2", "create", "delete", "list", "info", "setblock", "setstrength", "setsound", "reload"};
+            String[] subCommands = {"pos1", "pos2", "create", "delete", "list", "info", "setblock", "setstrength", "setforward", "setsound", "reload"};
             for (String subCommand : subCommands) {
                 if (subCommand.startsWith(args[0].toLowerCase())) {
                     completions.add(subCommand);
@@ -313,7 +346,7 @@ public class JumpPadCommand implements CommandExecutor, TabCompleter {
             String subCommand = args[0].toLowerCase();
             if (subCommand.equals("delete") || subCommand.equals("info") ||
                     subCommand.equals("setblock") || subCommand.equals("setstrength") ||
-                    subCommand.equals("setsound")) {
+                    subCommand.equals("setforward") || subCommand.equals("setsound")) {
 
                 for (String regionName : plugin.getRegionManager().getAllRegions().keySet()) {
                     if (regionName.toLowerCase().startsWith(args[1].toLowerCase())) {
@@ -335,6 +368,14 @@ public class JumpPadCommand implements CommandExecutor, TabCompleter {
                         completions.add(sound.name());
                     }
                 }
+            } else if (subCommand.equals("setstrength") || subCommand.equals("setforward")) {
+                // Provide some example values
+                completions.add("0.5");
+                completions.add("1.0");
+                completions.add("1.5");
+                completions.add("2.0");
+                completions.add("2.5");
+                completions.add("3.0");
             }
         }
 

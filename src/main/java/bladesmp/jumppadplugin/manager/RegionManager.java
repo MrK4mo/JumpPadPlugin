@@ -31,117 +31,126 @@ public class RegionManager {
         if (!regionsFile.exists()) {
             try {
                 plugin.getDataFolder().mkdirs();
-                regionsFile.createNewFile();
-            } catch (IOException e) {
-                plugin.getLogger().severe("Fehler beim Erstellen der regions.yml: " + e.getMessage());
-                return;
+                regions.put(name, region);
+                return true;
             }
-        }
 
-        regionsConfig = YamlConfiguration.loadConfiguration(regionsFile);
+            public boolean deleteRegion(String name) {
+                return regions.remove(name) != null;
+            }
 
-        ConfigurationSection regionsSection = regionsConfig.getConfigurationSection("regions");
+            public JumpPadRegion getRegion(String name) {
+                return regions.get(name);
+            }
+
+            public JumpPadRegion getRegionAt(Location location) {
+                for (JumpPadRegion region : regions.values()) {
+                    if (region.contains(location)) {
+                        return region;
+                    }
+                }
+                return null;
+            }
+
+            public boolean regionExists(String name) {
+                return regions.containsKey(name);
+            }
+
+            public Map<String, JumpPadRegion> getAllRegions() {
+                return new HashMap<>(regions);
+            }
+
+            public boolean setRegionBlock(String regionName, Material block) {
+                JumpPadRegion region = regions.get(regionName);
+                if (region == null) return false;
+
+                region.setJumpPadBlock(block);
+                return true;
+            }
+
+            public boolean setRegionStrength(String regionName, double strength) {
+                JumpPadRegion region = regions.get(regionName);
+                if (region == null) return false;
+
+                region.setJumpStrength(strength);
+                return true;
+            }
+
+            public boolean setRegionForwardStrength(String regionName, double forwardStrength) {
+                JumpPadRegion region = regions.get(regionName);
+                if (region == null) return false;
+
+                region.setForwardStrength(forwardStrength);
+                return true;
+            }
+
+            public boolean setRegionSound(String regionName, Sound sound) {
+                JumpPadRegion region = regions.get(regionName);
+                if (region == null) return false;
+
+                region.setSound(sound);
+                return true;
+            }
+        }File.createNewFile();
+    } catch (IOException e) {
+        plugin.getLogger().severe("Fehler beim Erstellen der regions.yml: " + e.getMessage());
+        return;
+    }
+}
+
+regionsConfig = YamlConfiguration.loadConfiguration(regionsFile);
+
+ConfigurationSection regionsSection = regionsConfig.getConfigurationSection("regions");
         if (regionsSection == null) return;
 
         for (String regionName : regionsSection.getKeys(false)) {
-            ConfigurationSection regionSection = regionsSection.getConfigurationSection(regionName);
+ConfigurationSection regionSection = regionsSection.getConfigurationSection(regionName);
             if (regionSection == null) continue;
 
-            try {
-                JumpPadRegion region = JumpPadRegion.fromConfig(regionSection);
+        try {
+JumpPadRegion region = JumpPadRegion.fromConfig(regionSection);
                 regions.put(regionName, region);
             } catch (Exception e) {
-                plugin.getLogger().warning("Fehler beim Laden der Region '" + regionName + "': " + e.getMessage());
-            }
+        plugin.getLogger().warning("Fehler beim Laden der Region '" + regionName + "': " + e.getMessage());
+        }
         }
 
         plugin.getLogger().info("Loaded " + regions.size() + " regions.");
-    }
-
-    public void saveRegions() {
-        try {
-            regionsConfig = new YamlConfiguration();
-
-            for (Map.Entry<String, JumpPadRegion> entry : regions.entrySet()) {
-                String regionName = entry.getKey();
-                JumpPadRegion region = entry.getValue();
-
-                ConfigurationSection regionSection = regionsConfig.createSection("regions." + regionName);
-                region.saveToConfig(regionSection);
-            }
-
-            regionsConfig.save(regionsFile);
-
-        } catch (IOException e) {
-            plugin.getLogger().severe("Fehler beim Speichern der regions.yml: " + e.getMessage());
-        }
-    }
-
-    public boolean createRegion(String name, Location pos1, Location pos2) {
-        if (regions.containsKey(name)) {
-            return false;
         }
 
-        ConfigManager config = plugin.getConfigManager();
-        JumpPadRegion region = new JumpPadRegion(
-                name,
-                pos1,
-                pos2,
-                config.getDefaultJumpPadBlock(),
-                config.getDefaultJumpStrength(),
-                config.getDefaultSound()
-        );
+public void saveRegions() {
+    try {
+        regionsConfig = new YamlConfiguration();
 
-        regions.put(name, region);
-        return true;
-    }
+        for (Map.Entry<String, JumpPadRegion> entry : regions.entrySet()) {
+            String regionName = entry.getKey();
+            JumpPadRegion region = entry.getValue();
 
-    public boolean deleteRegion(String name) {
-        return regions.remove(name) != null;
-    }
-
-    public JumpPadRegion getRegion(String name) {
-        return regions.get(name);
-    }
-
-    public JumpPadRegion getRegionAt(Location location) {
-        for (JumpPadRegion region : regions.values()) {
-            if (region.contains(location)) {
-                return region;
-            }
+            ConfigurationSection regionSection = regionsConfig.createSection("regions." + regionName);
+            region.saveToConfig(regionSection);
         }
-        return null;
-    }
 
-    public boolean regionExists(String name) {
-        return regions.containsKey(name);
-    }
+        regionsConfig.save(regionsFile);
 
-    public Map<String, JumpPadRegion> getAllRegions() {
-        return new HashMap<>(regions);
-    }
-
-    public boolean setRegionBlock(String regionName, Material block) {
-        JumpPadRegion region = regions.get(regionName);
-        if (region == null) return false;
-
-        region.setJumpPadBlock(block);
-        return true;
-    }
-
-    public boolean setRegionStrength(String regionName, double strength) {
-        JumpPadRegion region = regions.get(regionName);
-        if (region == null) return false;
-
-        region.setJumpStrength(strength);
-        return true;
-    }
-
-    public boolean setRegionSound(String regionName, Sound sound) {
-        JumpPadRegion region = regions.get(regionName);
-        if (region == null) return false;
-
-        region.setSound(sound);
-        return true;
+    } catch (IOException e) {
+        plugin.getLogger().severe("Fehler beim Speichern der regions.yml: " + e.getMessage());
     }
 }
+
+public boolean createRegion(String name, Location pos1, Location pos2) {
+    if (regions.containsKey(name)) {
+        return false;
+    }
+
+    ConfigManager config = plugin.getConfigManager();
+    JumpPadRegion region = new JumpPadRegion(
+            name,
+            pos1,
+            pos2,
+            config.getDefaultJumpPadBlock(),
+            config.getDefaultJumpStrength(),
+            config.getDefaultForwardStrength(), // Neue Eigenschaft hinzufügen
+            config.getDefaultSound()
+    );
+
+    regions

@@ -5,8 +5,13 @@ jumppad:
   # Standard Block für JumpPads (kann pro Region überschrieben werden)
   default-block: SLIME_BLOCK
 
-  # Standard Sprung Stärke (kann pro Region überschrieben werden)
+  # Standard Sprung Stärke (vertikal) (kann pro Region überschrieben werden)
   default-strength: 1.5
+
+  # Standard Vorwärts Stärke (horizontal) (kann pro Region überschrieben werden)
+  # 0.0 = kein Vorwärtsschub, nur vertikaler Sprung
+  # Höhere Werte = stärkerer Schub in Blickrichtung
+  default-forward-strength: 0.8
 
   # Standard Sound (kann pro Region überschrieben werden)
   default-sound: ENTITY_SLIME_SQUISH

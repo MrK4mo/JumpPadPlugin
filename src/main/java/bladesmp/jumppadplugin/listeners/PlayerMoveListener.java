@@ -74,9 +74,24 @@ public class PlayerMoveListener implements Listener {
     }
 
     private void performJump(Player player, JumpPadRegion region) {
-        // Calculate jump vector
-        double strength = region.getJumpStrength();
-        Vector jumpVector = new Vector(0, strength, 0);
+        // Get player's facing direction for forward movement
+        Vector direction = player.getLocation().getDirection();
+
+        // Normalize the direction and remove Y component for horizontal movement only
+        direction.setY(0);
+        direction.normalize();
+
+        // Calculate jump vector with both vertical and forward components
+        double verticalStrength = region.getJumpStrength();
+        double forwardStrength = region.getForwardStrength();
+
+        Vector jumpVector = new Vector(0, verticalStrength, 0);
+
+        // Add forward momentum if configured
+        if (forwardStrength > 0) {
+            Vector forwardVector = direction.multiply(forwardStrength);
+            jumpVector.add(forwardVector);
+        }
 
         // Apply velocity
         player.setVelocity(jumpVector);

@@ -18,6 +18,7 @@ public class ConfigManager {
     // Default config values
     private Material defaultJumpPadBlock = Material.SLIME_BLOCK;
     private double defaultJumpStrength = 1.5;
+    private double defaultForwardStrength = 0.8; // Neue Standard-Vorwärtsstärke
     private Sound defaultSound = Sound.ENTITY_SLIME_SQUISH;
     private boolean messagesEnabled = true;
     private String jumpMessage = "<green>Du wurdest von einem JumpPad katapultiert!";
@@ -51,6 +52,7 @@ public class ConfigManager {
             // JumpPad settings
             config.set("jumppad.default-block", defaultJumpPadBlock.name());
             config.set("jumppad.default-strength", defaultJumpStrength);
+            config.set("jumppad.default-forward-strength", defaultForwardStrength); // Neue Eigenschaft
             config.set("jumppad.default-sound", defaultSound.name());
 
             // Message settings
@@ -77,6 +79,7 @@ public class ConfigManager {
         }
 
         defaultJumpStrength = config.getDouble("jumppad.default-strength", 1.5);
+        defaultForwardStrength = config.getDouble("jumppad.default-forward-strength", 0.8); // Neue Eigenschaft laden
 
         try {
             defaultSound = Sound.valueOf(config.getString("jumppad.default-sound", "ENTITY_SLIME_SQUISH"));
@@ -104,6 +107,7 @@ public class ConfigManager {
     // Getters
     public Material getDefaultJumpPadBlock() { return defaultJumpPadBlock; }
     public double getDefaultJumpStrength() { return defaultJumpStrength; }
+    public double getDefaultForwardStrength() { return defaultForwardStrength; } // Neuer Getter
     public Sound getDefaultSound() { return defaultSound; }
     public boolean areMessagesEnabled() { return messagesEnabled; }
     public String getJumpMessage() { return jumpMessage; }

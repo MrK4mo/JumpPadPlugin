@@ -14,18 +14,20 @@ public class JumpPadRegion {
     private final Location pos2;
     private Material jumpPadBlock;
     private double jumpStrength;
+    private double forwardStrength; // Neue Eigenschaft für vorwärts Sprung
     private Sound sound;
 
     // Cached min/max values for performance
     private final int minX, maxX, minY, maxY, minZ, maxZ;
     private final World world;
 
-    public JumpPadRegion(String name, Location pos1, Location pos2, Material jumpPadBlock, double jumpStrength, Sound sound) {
+    public JumpPadRegion(String name, Location pos1, Location pos2, Material jumpPadBlock, double jumpStrength, double forwardStrength, Sound sound) {
         this.name = name;
         this.pos1 = pos1.clone();
         this.pos2 = pos2.clone();
         this.jumpPadBlock = jumpPadBlock;
         this.jumpStrength = jumpStrength;
+        this.forwardStrength = forwardStrength;
         this.sound = sound;
 
         // Calculate boundaries
@@ -36,6 +38,11 @@ public class JumpPadRegion {
         this.minZ = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
         this.maxZ = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
         this.world = pos1.getWorld();
+    }
+
+    // Konstruktor für Rückwärtskompatibilität
+    public JumpPadRegion(String name, Location pos1, Location pos2, Material jumpPadBlock, double jumpStrength, Sound sound) {
+        this(name, pos1, pos2, jumpPadBlock, jumpStrength, 0.0, sound);
     }
 
     public boolean contains(Location location) {
@@ -63,6 +70,7 @@ public class JumpPadRegion {
         // Save settings
         section.set("jump-pad-block", jumpPadBlock.name());
         section.set("jump-strength", jumpStrength);
+        section.set("forward-strength", forwardStrength); // Neue Eigenschaft speichern
         section.set("sound", sound.name());
     }
 
@@ -87,9 +95,10 @@ public class JumpPadRegion {
 
         Material jumpPadBlock = Material.valueOf(section.getString("jump-pad-block"));
         double jumpStrength = section.getDouble("jump-strength");
+        double forwardStrength = section.getDouble("forward-strength", 0.0); // Default 0.0 für Rückwärtskompatibilität
         Sound sound = Sound.valueOf(section.getString("sound"));
 
-        return new JumpPadRegion(section.getName(), pos1, pos2, jumpPadBlock, jumpStrength, sound);
+        return new JumpPadRegion(section.getName(), pos1, pos2, jumpPadBlock, jumpStrength, forwardStrength, sound);
     }
 
     // Getters and Setters
@@ -100,6 +109,8 @@ public class JumpPadRegion {
     public void setJumpPadBlock(Material jumpPadBlock) { this.jumpPadBlock = jumpPadBlock; }
     public double getJumpStrength() { return jumpStrength; }
     public void setJumpStrength(double jumpStrength) { this.jumpStrength = jumpStrength; }
+    public double getForwardStrength() { return forwardStrength; }
+    public void setForwardStrength(double forwardStrength) { this.forwardStrength = forwardStrength; }
     public Sound getSound() { return sound; }
     public void setSound(Sound sound) { this.sound = sound; }
     public World getWorld() { return world; }
