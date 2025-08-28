@@ -1,0 +1,21 @@
+name: JumpPad
+version: 1.0.0
+main: bladesmp.jumppadplugin.JumpPadPlugin
+api-version: 1.21
+folia-supported: true
+author: YourName
+description: Ein JumpPad Plugin mit Region-basierter Funktionalität für Folia
+
+commands:
+  jumppad:
+    description: JumpPad Hauptbefehl
+    usage: /jumppad <subcommand>
+    aliases: [jp]
+
+permissions:
+  jumppad.admin:
+    description: Erlaubt die Verwaltung von JumpPad Regionen
+    default: op
+  jumppad.use:
+    description: Erlaubt die Nutzung von JumpPads
+    default: true

@@ -1,0 +1,26 @@
+# JumpPad Plugin Konfiguration
+
+# JumpPad Einstellungen
+jumppad:
+  # Standard Block für JumpPads (kann pro Region überschrieben werden)
+  default-block: SLIME_BLOCK
+
+  # Standard Sprung Stärke (kann pro Region überschrieben werden)
+  default-strength: 1.5
+
+  # Standard Sound (kann pro Region überschrieben werden)
+  default-sound: ENTITY_SLIME_SQUISH
+
+# Nachrichten Einstellungen
+messages:
+  # Nachrichten aktivieren/deaktivieren
+  enabled: true
+
+  # Nachricht beim Springen (MiniMessage Format)
+  jump: "<green>Du wurdest von einem JumpPad katapultiert!"
+
+  # Admin Nachrichten
+  region-created: "<green>Region '<region>' wurde erfolgreich erstellt!"
+  region-deleted: "<red>Region '<region>' wurde gelöscht!"
+  no-permission: "<red>Du hast keine Berechtigung für diesen Befehl!"
+  region-not-found: "<red>Region '<region>' wurde nicht gefunden!"
